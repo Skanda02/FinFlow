@@ -8,4 +8,5 @@ import (
 
 func Register(mux *http.ServeMux) {
 	mux.HandleFunc("/health", handlers.Health)
+	mux.HandleFunc("/register", handlers.Register)
 }

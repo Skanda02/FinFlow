@@ -15,14 +15,14 @@ func WriteJSON(w http.ResponseWriter, status int, payload interface{}) {
 	}
 }
 
-func WriteData(w http.ResponseWriter, status int, data interface{}) {
+func WriteJSONData(w http.ResponseWriter, status int, data interface{}) {
 	WriteJSON(w, status, map[string]interface{}{
 		"success": true,
 		"data": data,
 	})
 }
 
-func WriteError(w http.ResponseWriter, status int, message string) {
+func WriteJSONError(w http.ResponseWriter, status int, message string) {
 	WriteJSON(w, status, map[string]interface{}{
 		"success": false,
 		"message": message,

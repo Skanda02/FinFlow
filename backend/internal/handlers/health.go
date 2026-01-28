@@ -5,7 +5,8 @@ import (
 )
 
 func Health(w http.ResponseWriter, r *http.Request) {
-	WriteData(w, http.StatusOK, map[string]interface{}{
+	WriteJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
 		"message": "Okay",
 	})
 }
