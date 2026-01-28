@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/joho/godotenv"
+
+	"finflow/internal/router"
 )
 
 func main() {
@@ -16,9 +18,7 @@ func main() {
 	var port string = os.Getenv("PORT")
 	var mux *http.ServeMux = http.NewServeMux()
 
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("running!"))
-	})
+	router.Register(mux)
 
 	log.Println("Running server at :" + port)
 	http.ListenAndServe(":"+port, mux)
