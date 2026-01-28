@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'package:finflow/screens/signup_screen.dart';
+import 'package:finflow/screens/home_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   @override
@@ -22,6 +23,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue>(authNotifierProvider, (_, state) {
+      if (!state.isLoading && !state.hasError) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    });
+
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(

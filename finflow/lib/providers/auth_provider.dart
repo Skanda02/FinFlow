@@ -25,21 +25,30 @@ class AuthNotifier extends AsyncNotifier<void> {
     // 1. Set state to loading (triggers spinner in UI)
     state = const AsyncLoading();
 
-    // 2. Perform the POST request to your Go Backend
-    state = await AsyncValue.guard(() async {
-      final dio = ref.read(dioProvider);
+    // 2. Simulate a network request
+    await Future.delayed(const Duration(seconds: 1));
 
-      final response = await dio.post(
-        '/login',
-        data: {'email': email, 'password': password},
-      );
+    // 3.
+    // START: Backend login logic (commented out for development)
+    // state = await AsyncValue.guard(() async {
+    //   final dio = ref.read(dioProvider);
 
-      if (response.statusCode != 200) {
-        throw Exception("Login Failed: ${response.statusMessage}");
-      }
+    //   final response = await dio.post(
+    //     '/login',
+    //     data: {'email': email, 'password': password},
+    //   );
 
-      // If successful, you would usually store a JWT token here
-      print("Login Success: ${response.data}");
-    });
+    //   if (response.statusCode != 200) {
+    //     throw Exception("Login Failed: ${response.statusMessage}");
+    //   }
+    //   // If successful, you would usually store a JWT token here
+    //   print("Login Success: ${response.data}");
+    // });
+    // END: Backend login logic
+
+    // START: Mock login logic for development
+    // In a real app, you would get a user object or token here
+    state = const AsyncData(null);
+    // END: Mock login logic
   }
 }
