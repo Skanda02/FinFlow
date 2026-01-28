@@ -11,11 +11,13 @@ class _SplitwiseScreenState extends State<SplitwiseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _amountController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _amountController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -23,18 +25,21 @@ class _SplitwiseScreenState extends State<SplitwiseScreen> {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
       final amount = double.tryParse(_amountController.text);
+      final description = _descriptionController.text;
       final timestamp = DateTime.now();
 
       if (amount != null) {
         // TODO: Send data to the database
         print('Email: $email');
         print('Amount: $amount');
+        print('Description: $description');
         print('Timestamp: $timestamp');
 
         // Clear the form
         _formKey.currentState!.reset();
         _emailController.clear();
         _amountController.clear();
+        _descriptionController.clear();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Split request sent successfully!')),
@@ -90,6 +95,21 @@ class _SplitwiseScreenState extends State<SplitwiseScreen> {
                 }
                 if (double.tryParse(value) == null) {
                   return 'Please enter a valid number';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                prefixIcon: Icon(Icons.description),
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a description';
                 }
                 return null;
               },

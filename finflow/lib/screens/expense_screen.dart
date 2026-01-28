@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class ExpenseScreen extends StatefulWidget {
   const ExpenseScreen({super.key});
@@ -21,11 +22,14 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
   void _submitExpense() {
     if (_formKey.currentState!.validate()) {
-      final amount = double.tryParse(_amountController.text);
-      final description = _descriptionController.text;
-      final timestamp = DateTime.now();
+      try {
+        Parser p = Parser();
+        Expression exp = p.parse(_amountController.text);
+        ContextModel cm = ContextModel();
+        final amount = exp.evaluate(EvaluationType.REAL, cm);
+        final description = _descriptionController.text;
+        final timestamp = DateTime.now();
 
-      if (amount != null) {
         // TODO: Send data to the database
         print('Expense Amount: $amount');
         print('Description: $description');
@@ -38,6 +42,10 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Expense added successfully!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid amount expression')),
         );
       }
     }
@@ -64,15 +72,18 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 prefixIcon: Icon(Icons.attach_money),
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.text,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter an amount';
                 }
-                if (double.tryParse(value) == null) {
-                  return 'Please enter a valid number';
+                try {
+                  Parser p = Parser();
+                  p.parse(value);
+                  return null;
+                } catch (e) {
+                  return 'Please enter a valid expression';
                 }
-                return null;
               },
             ),
             const SizedBox(height: 16),
