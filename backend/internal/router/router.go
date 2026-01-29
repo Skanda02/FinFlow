@@ -37,4 +37,15 @@ func Register(mux *http.ServeMux) {
 
 	mux.HandleFunc("/add_income", applyMiddleware(handlers.AddIncome, protectedMiddleware...))
 	mux.HandleFunc("/add_expense", applyMiddleware(handlers.AddExpense, protectedMiddleware...))
+
+	// Bank connection endpoints
+	mux.HandleFunc("/bank/link", applyMiddleware(handlers.LinkBank, protectedMiddleware...))
+	mux.HandleFunc("/bank/unlink", applyMiddleware(handlers.UnlinkBank, protectedMiddleware...))
+	mux.HandleFunc("/bank/sync", applyMiddleware(handlers.SyncBankTransactions, protectedMiddleware...))
+	mux.HandleFunc("/bank/connections", applyMiddleware(handlers.GetBankConnections, protectedMiddleware...))
+
+	// Summary endpoints
+	mux.HandleFunc("/summary/weekly", applyMiddleware(handlers.GetWeeklySummary, protectedMiddleware...))
+	mux.HandleFunc("/summary/monthly", applyMiddleware(handlers.GetMonthlySummary, protectedMiddleware...))
+	mux.HandleFunc("/summary/custom", applyMiddleware(handlers.GetCustomSummary, protectedMiddleware...))
 }
