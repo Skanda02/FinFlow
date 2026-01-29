@@ -1,7 +1,6 @@
 import 'package:finflow/screens/expense_screen.dart';
 import 'package:finflow/screens/income_screen.dart';
 import 'package:finflow/screens/summary_screen.dart';
-import 'package:finflow/screens/splitwise_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
     SummaryScreen(),
     IncomeScreen(),
     ExpenseScreen(),
-    SplitwiseScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -45,10 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.arrow_downward),
             label: 'Expense',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.call_split),
-            label: 'Splitwise',
           ),
         ],
         currentIndex: _selectedIndex,
