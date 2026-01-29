@@ -23,25 +23,25 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Email == "" || req.Password == "" {
-		WriteJSONError(w, http.StatusBadRequest, "email and password required")
-		return
-	}
-
 	data := services.RegisterData{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
 	}
 
-	if err := services.RegisterNewUser(&data); err != nil {
-		WriteJSONError(w, http.StatusNotImplemented, err.Error())
+	user, err := services.RegisterNewUser(r.Context(), &data)
+	if err != nil {
+		HandleServiceError(w, err)
 		return
 	}
 
-	WriteJSONData(w, http.StatusOK, map[string]string{
-		"email": req.Email,
-		"name":  req.Name,
+	WriteJSONData(w, http.StatusCreated, map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":    user.UserID,
+			"email": user.Email,
+			"name":  user.Name,
+		},
+		"token": user.Token,
 	})
 }
 
@@ -52,22 +52,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Email == "" || req.Password == "" {
-		WriteJSONError(w, http.StatusBadRequest, "email and password required")
-		return
-	}
-
 	data := services.LoginData{
 		Email:    req.Email,
 		Password: req.Password,
 	}
 
-	if err := services.LoginUser(&data); err != nil {
-		WriteJSONError(w, http.StatusNotImplemented, err.Error())
+	user, err := services.LoginUser(r.Context(), &data)
+	if err != nil {
+		HandleServiceError(w, err)
 		return
 	}
 
-	WriteJSONData(w, http.StatusOK, map[string]string{
-		"email": req.Email,
+	WriteJSONData(w, http.StatusOK, map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":    user.UserID,
+			"email": user.Email,
+			"name":  user.Name,
+		},
+		"token": user.Token,
 	})
 }
