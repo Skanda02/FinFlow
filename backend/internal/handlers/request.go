@@ -23,3 +23,19 @@ func ReadJSON(r *http.Request, dst interface{}, maxBytes int64) error {
 
 	return nil
 }
+
+func GetRequest(w http.ResponseWriter, r *http.Request, req interface{}) bool {
+	if r.Method != http.MethodPost {
+		WriteJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return false
+	}
+
+	// Limit to 1MB
+	if err := ReadJSON(r, &req, (1 << 20)); err != nil {
+		WriteJSONError(w, http.StatusBadRequest, err.Error())
+		return false
+	}
+	
+	return true
+}
+

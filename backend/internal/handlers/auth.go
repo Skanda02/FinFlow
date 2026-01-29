@@ -1,31 +1,25 @@
 package handlers
 
 import (
-	"net/http"
 	"finflow/internal/services"
+	"net/http"
 )
 
 type RegisterRequest struct {
-	Name string `json:"name"`
-	Email string `json:"email"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type LoginRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		WriteJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-	
 	var req RegisterRequest
-	// Limit to 1MB
-	if err := ReadJSON(r, &req, (1 << 20)); err != nil {
-		WriteJSONError(w, http.StatusBadRequest, err.Error())
+
+	if !GetRequest(w, r, &req) {
 		return
 	}
 
@@ -35,11 +29,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := services.RegisterData{
-		Name: req.Name,
-		Email: req.Email,
+		Name:     req.Name,
+		Email:    req.Email,
 		Password: req.Password,
 	}
-	
+
 	if err := services.RegisterNewUser(&data); err != nil {
 		WriteJSONError(w, http.StatusNotImplemented, err.Error())
 		return
@@ -47,20 +41,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	WriteJSONData(w, http.StatusOK, map[string]string{
 		"email": req.Email,
-		"name": req.Name,
+		"name":  req.Name,
 	})
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		WriteJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
 	var req LoginRequest
-	// Limit to 1MB
-	if err := ReadJSON(r, &req, (1 << 20)); err != nil {
-		WriteJSONError(w, http.StatusBadRequest, err.Error())
+
+	if !GetRequest(w, r, &req) {
 		return
 	}
 
@@ -70,7 +58,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := services.LoginData{
-		Email: req.Email,
+		Email:    req.Email,
 		Password: req.Password,
 	}
 
@@ -83,4 +71,3 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"email": req.Email,
 	})
 }
-
