@@ -1,8 +1,10 @@
 package handlers
 
 import (
-	"finflow/internal/services"
 	"net/http"
+
+	"finflow/internal/http_helpers"
+	"finflow/internal/services"
 )
 
 type RegisterRequest struct {
@@ -19,7 +21,7 @@ type LoginRequest struct {
 func Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 
-	if !GetRequest(w, r, &req) {
+	if !http_helpers.GetRequest(w, r, &req) {
 		return
 	}
 
@@ -31,11 +33,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	user, err := services.RegisterNewUser(r.Context(), &data)
 	if err != nil {
-		HandleServiceError(w, err)
+		http_helpers.HandleServiceError(w, err)
 		return
 	}
 
-	WriteJSONData(w, http.StatusCreated, map[string]interface{}{
+	http_helpers.WriteJSONData(w, http.StatusCreated, map[string]interface{}{
 		"user": map[string]interface{}{
 			"id":    user.UserID,
 			"email": user.Email,
@@ -48,7 +50,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 
-	if !GetRequest(w, r, &req) {
+	if !http_helpers.GetRequest(w, r, &req) {
 		return
 	}
 
@@ -59,11 +61,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := services.LoginUser(r.Context(), &data)
 	if err != nil {
-		HandleServiceError(w, err)
+		http_helpers.HandleServiceError(w, err)
 		return
 	}
 
-	WriteJSONData(w, http.StatusOK, map[string]interface{}{
+	http_helpers.WriteJSONData(w, http.StatusOK, map[string]interface{}{
 		"user": map[string]interface{}{
 			"id":    user.UserID,
 			"email": user.Email,

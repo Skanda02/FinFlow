@@ -1,36 +1,11 @@
-package handlers
+package http_helpers
 
 import (
-	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 
 	"finflow/internal/services"
 )
-
-func WriteJSON(w http.ResponseWriter, status int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		log.Println("JSON encoding failed!")
-	}
-}
-
-func WriteJSONData(w http.ResponseWriter, status int, data interface{}) {
-	WriteJSON(w, status, map[string]interface{}{
-		"success": true,
-		"data":    data,
-	})
-}
-
-func WriteJSONError(w http.ResponseWriter, status int, message string) {
-	WriteJSON(w, status, map[string]interface{}{
-		"success": false,
-		"message": message,
-	})
-}
 
 // HandleServiceError maps service errors to appropriate HTTP responses
 func HandleServiceError(w http.ResponseWriter, err error) {
@@ -41,6 +16,8 @@ func HandleServiceError(w http.ResponseWriter, err error) {
 		WriteJSONError(w, http.StatusConflict, "user with this email already exists")
 	case errors.Is(err, services.ErrInvalidCredentials):
 		WriteJSONError(w, http.StatusUnauthorized, "invalid email or password")
+	case errors.Is(err, services.ErrInvalidAmount):
+		WriteJSONError(w, http.StatusBadRequest, "amount must be greater than zero")
 	default:
 		WriteJSONError(w, http.StatusInternalServerError, "internal server error")
 	}
