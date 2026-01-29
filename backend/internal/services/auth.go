@@ -10,6 +10,15 @@ type RegisterData struct {
 	Password string
 }
 
+type LoginData struct {
+	Email string
+	Password string
+}
+
 func RegisterNewUser(data *RegisterData) error {
+	return errors.New("Yet to implement")
+}
+
+func LoginUser(data *LoginData) error {
 	return errors.New("Yet to implement")
 }

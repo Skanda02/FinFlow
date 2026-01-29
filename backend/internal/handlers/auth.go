@@ -11,6 +11,11 @@ type RegisterRequest struct {
 	Password string `json:"password"`
 }
 
+type LoginRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		WriteJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
@@ -25,7 +30,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Email == "" || req.Password == "" {
-		WriteJSONError(w, http.StatusBadRequest, "Email and password required")
+		WriteJSONError(w, http.StatusBadRequest, "email and password required")
 		return
 	}
 
@@ -45,3 +50,37 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		"name": req.Name,
 	})
 }
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		WriteJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req LoginRequest
+	// Limit to 1MB
+	if err := ReadJSON(r, &req, (1 << 20)); err != nil {
+		WriteJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if req.Email == "" || req.Password == "" {
+		WriteJSONError(w, http.StatusBadRequest, "email and password required")
+		return
+	}
+
+	data := services.LoginData{
+		Email: req.Email,
+		Password: req.Password,
+	}
+
+	if err := services.LoginUser(&data); err != nil {
+		WriteJSONError(w, http.StatusNotImplemented, err.Error())
+		return
+	}
+
+	WriteJSONData(w, http.StatusOK, map[string]string{
+		"email": req.Email,
+	})
+}
+
